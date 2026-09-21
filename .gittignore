@@ -1,0 +1,5 @@
+   *.lyrics.txt
+   *.lyrics.cleaned.txt
+   .ipynb_checkpoints/
+   venv/
+   __pycache__/
