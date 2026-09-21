@@ -22,15 +22,31 @@ WHAT YOU NEED
 
 STEP 1 - INSTALL PYTHON PACKAGES
 --------------------------------
-Open a terminal (Anaconda Prompt / Command Prompt / Terminal) and run:
+Open a terminal:
+  Windows: search "Command Prompt" or "PowerShell" in the Start menu
+           (Anaconda Prompt also works if you use Anaconda)
+  Mac:     open Terminal (search it with Spotlight, Cmd+Space)
+
+Then run:
 
     pip install jupyter pandas requests beautifulsoup4 lyricsgenius matplotlib nltk wordcloud
 
-(Optional but recommended: do this inside a virtual environment.)
+On Mac, if that gives a "command not found: pip" error, use pip3 instead:
+
+    pip3 install jupyter pandas requests beautifulsoup4 lyricsgenius matplotlib nltk wordcloud
+
+(Optional but recommended: do this inside a virtual environment, so these
+packages don't clash with anything else on your machine.)
 
     python -m venv venv
-    venv\Scripts\activate          (Windows)
-    source venv/bin/activate       (Mac / Linux)
+
+Activate it:
+  Windows (Command Prompt):   venv\Scripts\activate
+  Windows (PowerShell):       venv\Scripts\Activate.ps1
+  Mac / Linux:                source venv/bin/activate
+
+You'll know it worked because your terminal prompt will show (venv) at the
+start of the line. Run the pip install command again after activating.
 
 If you are installing from inside Jupyter instead, run this in a cell:
 
@@ -48,8 +64,19 @@ so don't move the notebook in the middle of a run.
 
 Launch Jupyter from that folder:
 
+  Windows:
     cd path\to\billboard_project
     jupyter notebook
+
+  Mac:
+    cd path/to/billboard_project
+    jupyter notebook
+
+(Note the slash direction is different: backslash \ on Windows, forward
+slash / on Mac.)
+
+This opens a browser tab with the Jupyter file browser. Click
+hot100-scraper.ipynb to open it.
 
 
 STEP 3 - GET A GENIUS API TOKEN
@@ -68,9 +95,20 @@ STEP 3 - GET A GENIUS API TOKEN
        import os
        GENIUS_API_TOKEN = os.environ["GENIUS_API_TOKEN"]
 
-   and set the environment variable before launching Jupyter
-   (Windows:  setx GENIUS_API_TOKEN "your-token-here"  then reopen the terminal;
-    Mac/Linux: export GENIUS_API_TOKEN="your-token-here").
+   and set the environment variable before launching Jupyter:
+
+     Windows (Command Prompt):
+       setx GENIUS_API_TOKEN "your-token-here"
+       (then close and reopen the terminal for it to take effect)
+
+     Windows (PowerShell):
+       [System.Environment]::SetEnvironmentVariable("GENIUS_API_TOKEN","your-token-here","User")
+       (then close and reopen PowerShell)
+
+     Mac / Linux:
+       export GENIUS_API_TOKEN="your-token-here"
+       (this only lasts for that terminal session — add it to ~/.zshrc or
+       ~/.bash_profile if you want it to persist across restarts)
 
 
 STEP 4 - RUN THE CELLS IN ORDER
@@ -130,6 +168,9 @@ KNOWN QUIRKS / TROUBLESHOOTING
   sure Jupyter is using the same Python environment you installed into
   (restart the kernel after installing).
 
+"command not found: pip" (Mac)
+  Use pip3 and python3 instead of pip and python.
+
 Scraper returns 0 songs, or the song/artist counts don't match
   Billboard may have changed its page layout, or it is blocking requests.
   The cell prints a WARNING when counts differ. The selectors it depends on
@@ -157,7 +198,8 @@ Long run time
 QUICK START (TL;DR)
 -------------------
 1. pip install jupyter pandas requests beautifulsoup4 lyricsgenius matplotlib nltk wordcloud
+   (Mac: use pip3 if pip alone doesn't work)
 2. Put your Genius token in the first cell (or an environment variable).
-3. jupyter notebook  ->  open billboardyearendscrapingnew.ipynb
+3. jupyter notebook  ->  open hot100-scraper.ipynb
 4. Run Cell 1 three times (enter 2023, 2024, 2025).
 5. Run Cell 3, then Cell 4.
