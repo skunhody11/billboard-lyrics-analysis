@@ -35,8 +35,8 @@ On Mac, if that gives a "command not found: pip" error, use pip3 instead:
 
     pip3 install jupyter pandas requests beautifulsoup4 lyricsgenius matplotlib nltk wordcloud
 
-(Optional but recommended: do this inside a virtual environment, so these
-packages don't clash with anything else on your machine.)
+Optional but recommended: install into a virtual environment so these
+packages don't clash with anything else on your machine.
 
     python -m venv venv
 
@@ -45,10 +45,10 @@ Activate it:
   Windows (PowerShell):       venv\Scripts\Activate.ps1
   Mac / Linux:                source venv/bin/activate
 
-You'll know it worked because your terminal prompt will show (venv) at the
-start of the line. Run the pip install command again after activating.
+Your terminal prompt will show (venv) at the start of the line once it's
+active. Run the pip install command again after activating.
 
-If you are installing from inside Jupyter instead, run this in a cell:
+If you'd rather install from inside Jupyter, run this in a cell instead:
 
     %pip install pandas requests beautifulsoup4 lyricsgenius matplotlib nltk wordcloud
 
@@ -59,8 +59,8 @@ STEP 2 - PUT THE NOTEBOOK IN A WORKING FOLDER
 ---------------------------------------------
 Make a folder (e.g. billboard_project) and put the .ipynb file in it.
 All output files (lyrics .txt files and word cloud .png files) are saved in
-the same folder the notebook runs from, and later cells read them from there,
-so don't move the notebook in the middle of a run.
+the same folder the notebook runs from, and later cells read them from there
+— don't move the notebook mid-run.
 
 Launch Jupyter from that folder:
 
@@ -72,8 +72,7 @@ Launch Jupyter from that folder:
     cd path/to/billboard_project
     jupyter notebook
 
-(Note the slash direction is different: backslash \ on Windows, forward
-slash / on Mac.)
+(Slash direction differs: backslash \ on Windows, forward slash / on Mac.)
 
 This opens a browser tab with the Jupyter file browser. Click
 hot100-scraper.ipynb to open it.
@@ -90,7 +89,8 @@ STEP 3 - GET A GENIUS API TOKEN
 
    SECURITY NOTE: Treat this token like a password. Don't share the notebook
    with a live token pasted in it (GitHub, email, class submission, etc.).
-   Safer option - keep it out of the notebook entirely:
+
+   Safer option — keep it out of the notebook entirely:
 
        import os
        GENIUS_API_TOKEN = os.environ["GENIUS_API_TOKEN"]
@@ -99,16 +99,16 @@ STEP 3 - GET A GENIUS API TOKEN
 
      Windows (Command Prompt):
        setx GENIUS_API_TOKEN "your-token-here"
-       (then close and reopen the terminal for it to take effect)
+       (close and reopen the terminal for it to take effect)
 
      Windows (PowerShell):
        [System.Environment]::SetEnvironmentVariable("GENIUS_API_TOKEN","your-token-here","User")
-       (then close and reopen PowerShell)
+       (close and reopen PowerShell)
 
      Mac / Linux:
        export GENIUS_API_TOKEN="your-token-here"
-       (this only lasts for that terminal session — add it to ~/.zshrc or
-       ~/.bash_profile if you want it to persist across restarts)
+       (lasts only for that terminal session — add it to ~/.zshrc or
+       ~/.bash_profile to persist across restarts)
 
 
 STEP 4 - RUN THE CELLS IN ORDER
@@ -117,33 +117,36 @@ CELL 1 (scraper + lyrics downloader)
   - Run it. When prompted "Enter the year:", type a year such as 2025 and
     press Enter.
   - It prints the Billboard URL, the song list, then searches Genius for each
-    song. There is a 2-second pause between songs, so a full 100-song list
+    song. There's a 2-second pause between songs, so a full 100-song list
     takes roughly 5-10 minutes. Let it finish.
   - Output: <year>.lyrics.txt   (example: 2025.lyrics.txt)
   - REPEAT this cell once per year you want to analyze. The analysis cells
-    below are set to 2023, 2024, and 2025, so you need to run Cell 1
-    three times (entering 2023, then 2024, then 2025) to have all three files.
-    Each rerun overwrites that year's file.
+    below are set to 2023, 2024, and 2025, so run Cell 1 three times
+    (entering 2023, then 2024, then 2025) to have all three files. Each
+    rerun overwrites that year's file.
 
-CELL 2 (test cell)
-  - Just a one-off Genius search test ("Flowers" by Miley Cyrus). Optional.
-    It only works after Cell 1 has been run, because it uses the `genius`
-    object created there. You can skip it.
+CELL 2 (manual lookup for mismatched titles)
+  - Use this when Genius styles a song's title or artist differently than
+    Billboard does, so Cell 1 can't find it automatically.
+  - Enter the title and artist the way Genius styles them:
+       song = genius.search_song([song], [artist])
+  - Only works after Cell 1 has been run, since it reuses the `genius`
+    object created there.
 
 CELL 3 (clean lyrics + word clouds)
   - Downloads NLTK's stopword list automatically on the first run.
-  - Reads 2023/2024/2025 .lyrics.txt files, cleans them, and writes
+  - Reads the 2023/2024/2025 .lyrics.txt files, cleans them, and writes
     <year>.lyrics.cleaned.txt for each.
   - Shows a word cloud for each year.
   - To change the years, edit this line:   years = ["2023", "2024", "2025"]
 
 CELL 4 (sentiment analysis)
   - Downloads NLTK's VADER lexicon automatically on the first run.
-  - Reads the .lyrics.cleaned.txt files from Cell 3 (so Cell 3 must be run
+  - Reads the .lyrics.cleaned.txt files from Cell 3 (so Cell 3 must run
     first) and prints the % positive / neutral / negative lines per year.
   - Draws a stacked bar chart comparing years.
-  - It uses its own copy of the years list:  years = ["2023", "2024", "2025"]
-    -- keep it matching Cell 3.
+  - Has its own copy of the years list:   years = ["2023", "2024", "2025"]
+    — keep it matching Cell 3.
 
 CELL 5
   - Empty. Nothing to run.
@@ -172,9 +175,13 @@ KNOWN QUIRKS / TROUBLESHOOTING
   Use pip3 and python3 instead of pip and python.
 
 Scraper returns 0 songs, or the song/artist counts don't match
-  Billboard may have changed its page layout, or it is blocking requests.
+  Billboard may have changed its page layout, or it's blocking requests.
   The cell prints a WARNING when counts differ. The selectors it depends on
   are the "c-title", "c-label", and "o-chart-results-list__item" classes.
+
+Genius can't find a song, or finds the wrong version
+  Use Cell 2 to search manually with the title/artist exactly as Genius
+  lists them.
 
 "Error fetching lyrics ... 401" or "403"
   Your Genius token is missing or wrong. Re-check Step 3.
@@ -184,15 +191,15 @@ Scraper returns 0 songs, or the song/artist counts don't match
   lyrics container was found). Those songs are skipped.
 
 Cell 1 asks for the year again after "Restart & Run All"
-  That's expected - it uses input(). Just type the year each time.
+  Expected — it uses input(). Just type the year each time.
 
 Word cloud PNG files come out blank
-  In Cell 3, plt.savefig(...) is called AFTER plt.show(), which saves an empty
-  figure. To fix it, move the savefig line so it runs BEFORE plt.show().
+  In Cell 3, plt.savefig(...) is called AFTER plt.show(), which saves an
+  empty figure. Move the savefig line so it runs BEFORE plt.show() to fix.
 
 Long run time
-  The 2-second time.sleep(2) between songs is there to avoid Genius rate
-  limits. Don't remove it.
+  The 2-second time.sleep(2) between songs avoids Genius rate limits.
+  Don't remove it.
 
 
 QUICK START (TL;DR)
@@ -202,4 +209,5 @@ QUICK START (TL;DR)
 2. Put your Genius token in the first cell (or an environment variable).
 3. jupyter notebook  ->  open hot100-scraper.ipynb
 4. Run Cell 1 three times (enter 2023, 2024, 2025).
-5. Run Cell 3, then Cell 4.
+5. Use Cell 2 for any songs Genius couldn't match automatically.
+6. Run Cell 3, then Cell 4.
